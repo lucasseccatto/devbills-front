@@ -4,15 +4,29 @@ import { Button } from '../button';
 import { Title } from '../title';
 import { Input } from '../input';
 import { Container } from './styles';
+import { api } from '../../server/api';
 
 export function CreateCategoryDialog() {
   const [open, setOpen] = useState(false);
+  const [categoryName, setCategoryName] = useState('');
+  const [color, setColor] = useState('');
 
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
 
+  const createCategory = async () => {
+    const data = {
+      title: categoryName,
+      color: color,
+    };
+
+    await api.post('/categories', data);
+  };
+
   const onSubmit = useCallback(() => {
+    createCategory();
+
     handleClose();
   }, [handleClose]);
 
@@ -30,8 +44,18 @@ export function CreateCategoryDialog() {
 
         <form>
           <div>
-            <Input label="Nome" placeholder="Nome da categoria..." />
-            <Input label="Cor" type="color" />
+            <Input
+              label="Nome"
+              placeholder="Nome da categoria..."
+              onChange={(e) => setCategoryName(e.target.value)}
+              value={categoryName}
+            />
+            <Input
+              label="Cor"
+              type="color"
+              onChange={(e) => setColor(e.target.value)}
+              value={color}
+            />
           </div>
           <footer>
             <Button onClick={handleClose} variant="outline" type="button">
